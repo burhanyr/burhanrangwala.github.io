@@ -27,6 +27,10 @@ const nextConfig = {
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
   },
+
+  // ✅ GitHub Pages static export support
+  output: 'export',
+  distDir: 'docs',
 }
 
 if (userConfig) {
