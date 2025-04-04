@@ -1,13 +1,15 @@
-let userConfig = undefined
+import deepmerge from 'deepmerge';
+
+let userConfig = undefined;
 try {
-  // try to import ESM first
-  userConfig = await import('./v0-user-next.config.mjs')
+  // Try to import ESM first
+  userConfig = await import('./v0-user-next.config.mjs');
 } catch (e) {
   try {
-    // fallback to CJS import
+    // Fallback to CJS import
     userConfig = await import("./v0-user-next.config");
   } catch (innerError) {
-    // ignore error
+    // Ignore error
   }
 }
 
@@ -31,25 +33,23 @@ const nextConfig = {
   // ✅ GitHub Pages static export support
   output: 'export',
   distDir: 'docs',
-}
+};
 
 if (userConfig) {
   // ESM imports will have a "default" property
-  const config = userConfig.default || userConfig
+  const config = userConfig.default || userConfig;
 
   for (const key in config) {
     if (
       typeof nextConfig[key] === 'object' &&
-      !Array.isArray(nextConfig[key])
+      !Array.isArray(nextConfig[key]) &&
+      nextConfig[key] !== null
     ) {
-      nextConfig[key] = {
-        ...nextConfig[key],
-        ...config[key],
-      }
+      nextConfig[key] = deepmerge(nextConfig[key], config[key]);
     } else {
-      nextConfig[key] = config[key]
+      nextConfig[key] = config[key];
     }
   }
 }
 
-export default nextConfig
+export default nextConfig;
